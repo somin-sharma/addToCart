@@ -1,4 +1,4 @@
-import React, {createContext,useReducer,useState} from 'react'
+import React, {createContext,useEffect,useReducer,useState} from 'react'
 import './cart.css'
 import Items from './Items'
 import {products} from "./products"
@@ -40,11 +40,18 @@ const Cart = () => {
             payload: id
         })
     }
-  return <>
+
+    useEffect(()=> {
+        dispatch({ type: "get-total"});
+    },[state.item])
+
+
+    
+  return (
   <CartContext.Provider value = {{...state, removeItem, clearCart, increment, decrement}}>
   <ContextCart/>
   </CartContext.Provider>
-  </>
+  )
 }
 
 export default Cart

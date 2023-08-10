@@ -1,48 +1,50 @@
-import React, {useState} from 'react'
+import React, {createContext,useReducer,useState} from 'react'
 import './cart.css'
 import Items from './Items'
 import {products} from "./products"
+import ContextCart from './ContextCart'
+import {reducer} from './reducer'
+
+export const CartContext = createContext();
+
+const initialState = {
+    item: products,
+    totalAmount: 0,
+    totalItem: 0,
+}
 
 const Cart = () => {
-    const [item, setItem] = useState(products);
-  return (
-    <div>
-        <header>
-            <div className='continue-shopping'>
-                <img src='./images/arrow.png' alt='arrow' className='arrow-icon'/>
-                <h3>Continue shopping</h3>
-            </div>
-            <div className='cart-icon'>
-                <img src='./images/cart.png' alt='cart'/>
-                <p>7</p>
+    const [state, dispatch] = useReducer(reducer, initialState)
+    const removeItem = (id) => {
+        return dispatch({
+            type: "remove",
+            payload: id,
+        })
+    }
+    const clearCart = ()=> {
+        return dispatch ({
+            type: "clear-cart"
+        })
+    }
 
-            </div>
-        </header>
+    const increment = (id)=> {
+        return dispatch ({
+            type: "increment",
+            payload: id
+        })
+    }
 
-        <section className='main-cart-section'>
-            <h1>Shopping Cart</h1>
-            <p className='total-items'>you have <span className='total-items-count'>7</span> items in shopping cart </p>
-            <div className='class-items'>
-                <div className='cart-items-container'>
-                    
-                    {
-                        item.map((curItem)=> {
-                            return <Items key={curItem.id} {...curItem}/>
-
-                        })
-                    }
-
-                    <Items/>
-                </div>
-                <div className='card-total'>
-                    <h3> Cart Total : <span>2200rs</span></h3>
-                    <button>Checkout</button>
-                </div>
-
-            </div>
-        </section>
-    </div>
-  )
+    const decrement = (id) => {
+        return dispatch ({
+            type: "decrement",
+            payload: id
+        })
+    }
+  return <>
+  <CartContext.Provider value = {{...state, removeItem, clearCart, increment, decrement}}>
+  <ContextCart/>
+  </CartContext.Provider>
+  </>
 }
 
 export default Cart
